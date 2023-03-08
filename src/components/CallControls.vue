@@ -58,9 +58,9 @@ export default {
     const supportsScreenshare = ref(false)
 
     const { ctrl, m } = useMagicKeys()
-    const ctrlV = computed(() => ctrl.value && m.value)
+    const ctrlM = computed(() => ctrl.value && m.value)
 
-    watch(ctrlV, (value) => {
+    watch(ctrlM, (value) => {
       if (value) {
         props.handleAudioClick()
       }
