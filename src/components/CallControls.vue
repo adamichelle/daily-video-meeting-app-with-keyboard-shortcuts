@@ -1,7 +1,7 @@
 <template>
   <div class="controls">
     <div class="devices">
-      <button @click="handleAudioClick">
+      <button title="ctrl+m / cmd+m" @click="handleAudioClick">
         <template v-if="participant.audio">
           <img class="icon" :src="micOn" alt="" />
         </template>
@@ -10,7 +10,7 @@
         </template>
       </button>
 
-      <button @click="handleVideoClick">
+      <button title="ctrl+alt+v / cmd+option+v" @click="handleVideoClick">
         <template v-if="participant.video">
           <img class="icon" :src="videoOn" alt="" />
         </template>
@@ -20,7 +20,7 @@
       </button>
 
       <template v-if="supportsScreenshare">
-        <button :disabled="disableScreenShare" @click="handleScreenshareClick">
+        <button title="ctrl+alt+s / cmd+option+s" :disabled="disableScreenShare" @click="handleScreenshareClick">
           <img class="icon" :src="screenShare" alt="" />
         </button>
       </template>
@@ -34,6 +34,8 @@
 
 <script>
 import daily from "@daily-co/daily-js";
+import { ref } from "vue"
+import { useMagicKeys, whenever } from '@vueuse/core'
 
 import leave from "../assets/leave_call.svg";
 import micOff from "../assets/mic_off.svg";
@@ -52,6 +54,29 @@ export default {
     "leaveCall",
     "disableScreenShare",
   ],
+  setup (props) {
+    const supportsScreenshare = ref(false)
+
+    const {
+      cmd_m: audioToggleMAC,
+      ctrl_m: audioToggleWindows,
+      cmd_option_s: screenShareToggleMAC,
+      ctrl_alt_s: screenShareToggleWindows,
+      cmd_option_v: videoToggleMAC,
+      ctrl_alt_v: videoToggleWindows
+    } = useMagicKeys()
+
+    whenever(audioToggleMAC, () => props.handleAudioClick())
+    whenever(audioToggleWindows, () => props.handleAudioClick())
+    whenever(screenShareToggleMAC, () => props.handleScreenshareClick())
+    whenever(screenShareToggleWindows, () => props.handleScreenshareClick())
+    whenever(videoToggleMAC, () => props.handleVideoClick())
+    whenever(videoToggleWindows, () => props.handleVideoClick())
+
+    return {
+      supportsScreenshare
+    }
+  },
   data() {
     return {
       leave,
@@ -60,7 +85,6 @@ export default {
       screenShare,
       videoOn,
       videoOff,
-      supportsScreenshare: false,
     };
   },
   mounted() {
