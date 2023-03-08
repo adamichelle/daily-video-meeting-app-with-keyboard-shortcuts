@@ -34,8 +34,8 @@
 
 <script>
 import daily from "@daily-co/daily-js";
-import { computed, ref, watch } from "vue"
-import { useMagicKeys } from '@vueuse/core'
+import { ref } from "vue"
+import { useMagicKeys, whenever } from '@vueuse/core'
 
 import leave from "../assets/leave_call.svg";
 import micOff from "../assets/mic_off.svg";
@@ -57,14 +57,21 @@ export default {
   setup (props) {
     const supportsScreenshare = ref(false)
 
-    const { ctrl, m } = useMagicKeys()
-    const ctrlM = computed(() => ctrl.value && m.value)
+    const {
+      cmd_m: audioToggleMAC,
+      ctrl_m: audioToggleWindows,
+      cmd_option_s: screenShareToggleMAC,
+      ctrl_alt_s: screenShareToggleWindows,
+      cmd_option_v: videoToggleMAC,
+      ctrl_alt_v: videoToggleWindows
+    } = useMagicKeys()
 
-    watch(ctrlM, (value) => {
-      if (value) {
-        props.handleAudioClick()
-      }
-    })
+    whenever(audioToggleMAC, () => props.handleAudioClick())
+    whenever(audioToggleWindows, () => props.handleAudioClick())
+    whenever(screenShareToggleMAC, () => props.handleScreenshareClick())
+    whenever(screenShareToggleWindows, () => props.handleScreenshareClick())
+    whenever(videoToggleMAC, () => props.handleVideoClick())
+    whenever(videoToggleWindows, () => props.handleVideoClick())
 
     return {
       supportsScreenshare
