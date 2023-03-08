@@ -32,10 +32,10 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import daily from "@daily-co/daily-js";
-import { ref } from "vue"
-import { useMagicKeys, whenever } from '@vueuse/core'
+import { onMounted, ref } from "vue";
+import { useMagicKeys, whenever } from "@vueuse/core";
 
 import leave from "../assets/leave_call.svg";
 import micOff from "../assets/mic_off.svg";
@@ -44,56 +44,38 @@ import screenShare from "../assets/screenshare.svg";
 import videoOff from "../assets/vid_off.svg";
 import videoOn from "../assets/vid_on.svg";
 
-export default {
-  name: "CallControls",
-  props: [
-    "participant",
-    "handleVideoClick",
-    "handleAudioClick",
-    "handleScreenshareClick",
-    "leaveCall",
-    "disableScreenShare",
-  ],
-  setup (props) {
-    const supportsScreenshare = ref(false)
+const props = defineProps([
+  "participant",
+  "handleVideoClick",
+  "handleAudioClick",
+  "handleScreenshareClick",
+  "leaveCall",
+  "disableScreenShare",
+]);
 
-    const {
-      cmd_m: audioToggleMAC,
-      ctrl_m: audioToggleWindows,
-      cmd_option_s: screenShareToggleMAC,
-      ctrl_alt_s: screenShareToggleWindows,
-      cmd_option_v: videoToggleMAC,
-      ctrl_alt_v: videoToggleWindows
-    } = useMagicKeys()
+const supportsScreenshare = ref(false);
 
-    whenever(audioToggleMAC, () => props.handleAudioClick())
-    whenever(audioToggleWindows, () => props.handleAudioClick())
-    whenever(screenShareToggleMAC, () => props.handleScreenshareClick())
-    whenever(screenShareToggleWindows, () => props.handleScreenshareClick())
-    whenever(videoToggleMAC, () => props.handleVideoClick())
-    whenever(videoToggleWindows, () => props.handleVideoClick())
+const {
+  cmd_m: audioToggleMAC,
+  ctrl_m: audioToggleWindows,
+  cmd_option_s: screenShareToggleMAC,
+  ctrl_alt_s: screenShareToggleWindows,
+  cmd_option_v: videoToggleMAC,
+  ctrl_alt_v: videoToggleWindows,
+} = useMagicKeys();
 
-    return {
-      supportsScreenshare
-    }
-  },
-  data() {
-    return {
-      leave,
-      micOn,
-      micOff,
-      screenShare,
-      videoOn,
-      videoOff,
-    };
-  },
-  mounted() {
-    // Only show the screen share button if the browser supports it
-    this.supportsScreenshare = daily.supportedBrowser().supportsScreenShare;
-  },
-};
+whenever(audioToggleMAC, () => props.handleAudioClick());
+whenever(audioToggleWindows, () => props.handleAudioClick());
+whenever(screenShareToggleMAC, () => props.handleScreenshareClick());
+whenever(screenShareToggleWindows, () => props.handleScreenshareClick());
+whenever(videoToggleMAC, () => props.handleVideoClick());
+whenever(videoToggleWindows, () => props.handleVideoClick());
+
+onMounted(() => {
+  // Only show the screen share button if the browser supports it
+  this.supportsScreenshare = daily.supportedBrowser().supportsScreenShare;
+})
 </script>
-
 <style scoped>
 .controls {
   position: absolute;
