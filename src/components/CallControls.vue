@@ -73,7 +73,7 @@ whenever(videoToggleWindows, () => props.handleVideoClick());
 
 onMounted(() => {
   // Only show the screen share button if the browser supports it
-  this.supportsScreenshare = daily.supportedBrowser().supportsScreenShare;
+  supportsScreenshare.value = daily.supportedBrowser().supportsScreenShare;
 })
 </script>
 <style scoped>
